@@ -1,0 +1,9 @@
+{
+  "accuracy": 0.5906,
+  "precision": 0.6329,
+  "recall": 0.761,
+  "f1_score": 0.691,
+  "roc_auc": 0.5774,
+  "log_loss": 0.6753,
+  "test_interactions_evaluated": 2726
+}

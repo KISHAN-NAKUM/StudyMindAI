@@ -1,0 +1,35 @@
+{
+  "split_summary": {
+    "total_students": 300,
+    "total_interactions": 18258,
+    "train_students": 210,
+    "test_students": 45,
+    "feature_names": [
+      "prior_total_attempts",
+      "prior_total_accuracy",
+      "prior_skill_attempts",
+      "prior_skill_accuracy",
+      "recent_5_accuracy",
+      "skill_recent_3_accuracy",
+      "difficulty_num",
+      "skill_id"
+    ]
+  },
+  "logistic_regression": {
+    "accuracy": 0.625,
+    "precision": 0.6481,
+    "recall": 0.8242,
+    "f1_score": 0.7256,
+    "roc_auc": 0.6283,
+    "log_loss": 0.6484
+  },
+  "random_forest": {
+    "accuracy": 0.616,
+    "precision": 0.6495,
+    "recall": 0.7858,
+    "f1_score": 0.7112,
+    "roc_auc": 0.6137,
+    "log_loss": 0.6558
+  },
+  "selected_baseline": "LogisticRegression"
+}

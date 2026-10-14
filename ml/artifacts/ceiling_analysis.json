@@ -1,0 +1,20 @@
+{
+  "dataset": "data/sample_data.csv",
+  "test_students": 45,
+  "full_test_cohort": {
+    "total_interactions": 2771,
+    "oracle_auc": 0.6879,
+    "oracle_log_loss": 0.6193,
+    "oracle_accuracy": 0.6575,
+    "oracle_brier_score": 0.2148
+  },
+  "transitions_cohort_dkt_aligned": {
+    "total_transitions": 2726,
+    "excluded_first_steps": 45,
+    "oracle_auc": 0.6892,
+    "oracle_log_loss": 0.6186,
+    "oracle_accuracy": 0.6592,
+    "oracle_brier_score": 0.2145
+  },
+  "theoretical_insight": "Because student responses are stochastic Bernoulli trials with guess rate (0.15), slip rate (0.05), and logistic noise, the Bayes-optimal oracle upper bound on this synthetic dataset is approximately AUC ~ 0.6892 and Log Loss ~ 0.6186. No algorithm can exceed this performance on this data."
+}

@@ -1,0 +1,36 @@
+# Environment & Secrets
+.env
+.env.*
+!.env.example
+
+# Python cache & bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local Database & data artifacts
+data/studymind.db
+*.db
+*.sqlite3
+
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# IDE & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Archives
+SMA_clean.zip
+*.zip
+
