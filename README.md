@@ -1,177 +1,227 @@
-# StudyMind 🧠 — Student-Focused Adaptive Learning Platform
+# StudyMindAI 🧠 — Smart Adaptive Learning Platform
 
-StudyMind is an adaptive learning web application and machine learning prototype. Rather than simply calculating a static quiz score, StudyMind tracks a student's learning trajectory across subjects and topics, estimates areas needing practice using **Deep Knowledge Tracing (DKT)** and **Classical ML Baselines**, and adaptively composes subsequent 10-question practice quizzes to prioritize weak topics while retaining broader curriculum revision.
+[![Python](https://img.shields.io/badge/Python-3.10%2B-blue.svg)](https://www.python.org/)
+[![FastAPI](https://img.shields.io/badge/Backend-FastAPI-009688.svg)](https://fastapi.tiangolo.com/)
+[![PyTorch](https://img.shields.io/badge/ML-PyTorch-EE4C2C.svg)](https://pytorch.org/)
+[![Scikit-Learn](https://img.shields.io/badge/ML-Scikit--Learn-F7931E.svg)](https://scikit-learn.org/)
+[![Frontend](https://img.shields.io/badge/Frontend-ES6%20SPA%20%2B%20CSS3-4f46e5.svg)](#frontend-architecture)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](#license)
+
+**StudyMindAI** is a modern, student-friendly adaptive learning platform and machine learning showcase. Rather than simply calculating a static quiz score, StudyMindAI models student cognitive mastery over time using **Deep Knowledge Tracing (DKT GRU)** and **Classical ML Baselines**, dynamically generates personalized 10-question practice quizzes to prioritize areas needing improvement, and provides a real-time **conversational AI Study Coach** powered by **WebSockets**.
+
+Designed with a clean **off-white studio aesthetic** (`#f8fafc`), human-centered wording, micro-animations, auditory feedback, and zero external build toolchain requirements (pure native ES6 modules).
 
 ---
 
 ## 🌟 Key Features
 
-1. **Secure Student Authentication & Data Isolation:**
-   - Registration, login, and session management with PBKDF2-HMAC-SHA256 password hashing and random salts.
-   - Strict student-level data privacy: records, quiz sessions, and learning trajectories are completely isolated in SQLite.
-2. **Guaranteed 10-Question Adaptive Quiz Engine:**
-   - Every quiz delivers exactly **10 verified questions** with 4 distinct options, unambiguous answer keys, hints, and detailed explanations.
-   - Dynamic LLM generation supported via environment variables, paired with a seamless **verified local question bank fallback** for robust offline operation.
-   - Question validation rejects malformed JSON, duplicate text, and ambiguous keys.
-   - Correct answers are strictly hidden until student submission.
-3. **Transparent Adaptive Practice Selection:**
-   - **Diagnostic Mode (Cold Start):** For learners with little or no history (< 5 interactions), provides a balanced curriculum survey.
-   - **Adaptive Mode:** Prioritizes topics with lower empirical accuracy and model-predicted mastery (~60–70% of questions) while reserving ~30–40% for revision to prevent overfitting practice.
-   - Transparent rationale provided in the UI explaining *why* each topic was selected.
-4. **Constructive Growth Feedback:**
-   - Detailed per-question review with explanations and hints.
-   - Clear classification of **topics to practise** (avoiding fixed labels like "bad at math").
-   - Honest disclaimers highlighting sample-size uncertainty.
-5. **Machine Learning & Deep Knowledge Tracing Pipeline:**
-   - **Item Response Theory (IRT) Synthetic Benchmark:** ~18,000 interactions across 300 students with skill mastery transitions.
-   - **Leakage-Safe Partitioning:** Train, validation, and test sets are split strictly by `student_id`.
-   - **Causal Baseline Features:** Handcrafted prior-only statistics (`prior_total_accuracy`, `recent_5_accuracy`, `prior_skill_accuracy`).
-   - **Classical ML Baselines:** Logistic Regression & Random Forest classifiers.
-   - **Deep Knowledge Tracing (DKT GRU):** PyTorch Recurrent Neural Network with masked padding loss.
-   - **Calibration Evaluation:** Reliability diagrams and Expected Calibration Error (ECE).
-   - **Interactive Knowledge Tracing Simulator:** Live interactive simulator in the web UI.
+### 1. 📊 Learning Dashboard & Smart Analytics
+- **Personalized Learner Overview:** Displays completed practice sessions, average accuracy, current learning streak, and estimated curriculum mastery.
+- **Top Recommended Topics:** Highlighting exact topics needing revision with transparent, student-friendly rationales.
+- **Interactive Radar Chart & Timeline:** Built using native Canvas-based rendering to visualize skill distribution and historical learning trajectory.
+
+### 2. 🎯 Guaranteed 10-Question Adaptive Practice Engine
+- **Diagnostic Mode (Curriculum Survey):** Provides a balanced exploration across foundational topics for new learners or initial diagnostics.
+- **Adaptive Practice Mode:** Automatically allocates questions to prioritize weaker topics (~60–70%) while reinforcing previously mastered topics (~30–40%) to prevent regression.
+- **Strict Integrity & Verified Question Bank:** Curated questions with unambiguous answer keys, hints, and pedagogical explanations. Correct answers are hidden until submission.
+
+### 3. 🔬 AI Practice Lab & Neural Knowledge Tracing Simulator
+- **Live DKT Simulator:** Interactive sandbox showing how a Deep Knowledge Tracing recurrent neural network (GRU) updates its belief of student skill mastery after each answered question.
+- **Interactive Timeline:** Step through sequential answers (correct/incorrect) and observe real-time probability shifts across all 15 curriculum topics.
+- **Model Benchmark Suite:** Side-by-side performance metrics comparing **Logistic Regression**, **Random Forest**, and **DKT (GRU)** on ROC-AUC, F1-Score, and Expected Calibration Error (ECE).
+
+### 4. 🎓 Real-Time AI Study Coach (WebSocket Streaming)
+- **Conversational Intelligence:** Greets learners by name (*"Hey Alex! 👋 How can I help you today?"*) and provides detailed pedagogical explanations, code snippets, and intuitive analogies.
+- **Word-by-Word Streaming:** Powered by a bidirectional **WebSocket endpoint (`/api/tutor/ws`)** with a pulsing typing indicator and seamless automatic fallback to HTTP REST (`/api/tutor/chat`).
+- **Rich Markdown Formatting:** Automatically renders headings, bold text, bullet points, syntax-highlighted code blocks, and formula explanations.
+- **Dual Interface:** Accessible both through the dedicated full-screen coach view and an always-available floating bottom-right drawer.
+
+### 5. 🎨 Design & Aesthetic Excellence
+- **Off-White Studio Palette:** Modern, high-contrast, distraction-free color palette (`#f8fafc` canvas, `#ffffff` elevated cards, `#0f172a` typography, `#4f46e5` indigo / `#7c3aed` violet AI accents).
+- **Subtle Ambient Canvas:** Lightweight, battery-efficient particle background simulating synaptic neural connections.
+- **Web Audio Sound Effects:** Subtle chime on login, clicks on navigation, and success harmonies on quiz submission (with full user mute toggle).
 
 ---
 
-## 🏗️ Project Architecture
+## 🏗️ System Architecture
 
 ```text
 SMA/
-├── app.py                      # Streamlit application with modern dark UI
-├── requirements.txt            # Project dependencies
-├── .env.example                # Environment variables template
-├── README.md                   # Setup guide and documentation
-├── REPORT.md                   # Academic research report and evaluation
-├── auth/
-│   ├── __init__.py
-│   └── service.py              # Secure hashing, registration, and login
-├── database/
-│   ├── __init__.py
-│   ├── db.py                   # SQLite connection and isolated queries
-│   ├── models.py               # Dataclasses and entities
-│   └── seed_data.py            # Subjects, topics, questions, & demo user seeder
-├── quiz/
-│   ├── __init__.py
-│   ├── question_bank.py        # Curated verified questions across 4 subjects
-│   ├── validator.py            # Strict schema and batch validation
-│   ├── generator.py            # 10-question generator with verified bank fallback
-│   ├── grading.py              # Grading, topic stats, and feedback logic
-│   └── adaptive_selector.py    # Priority topic allocation & rationale engine
-├── ml/
-│   ├── __init__.py
-│   ├── dataset_generator.py    # IRT sequential interaction generator
-│   ├── feature_engineering.py  # Causal prior feature extraction & student split
-│   ├── train_baseline.py       # Logistic Regression & Random Forest pipeline
-│   ├── dkt_model.py            # PyTorch GRU Deep Knowledge Tracing model
-│   ├── train_dkt.py            # DKT training loop with sequence masking
-│   ├── evaluate.py             # Side-by-side benchmark & calibration curves
-│   ├── predict.py              # Real-time inference engine from SQLite history
-│   └── artifacts/              # Serialized models (.joblib, .pt) & metrics (.json)
-├── ui/
-│   ├── __init__.py
-│   ├── styles.py               # Custom CSS design system (Dark glassmorphism)
-│   └── components.py           # Reusable Plotly charts and UI widgets
-├── data/
-│   ├── README.md               # Dataset documentation and schema
-│   └── sample_data.csv         # Benchmark interaction dataset
-└── tests/
-    ├── __init__.py
-    ├── conftest.py             # PyTorch runtime initialization
-    ├── test_auth.py            # Authentication & security tests
-    ├── test_db.py              # Database isolation & CRUD tests
-    ├── test_validator.py       # Question format validation tests
-    ├── test_grading.py         # Scoring & topic analytics tests
-    ├── test_adaptive.py        # Diagnostic & adaptive allocation tests
-    └── test_ml.py              # Data leakage prevention & ML tests
+├── backend/                        # High-Performance FastAPI Application
+│   ├── main.py                     # App factory, static file mounting, CORS, & lifespans
+│   ├── schemas.py                  # Pydantic v2 validation models
+│   └── routers/
+│       ├── auth.py                 # PBKDF2 student auth, registration, & demo login
+│       ├── subjects.py             # Curriculum taxonomy, subjects, & topic metadata
+│       ├── quiz.py                 # Adaptive quiz generation & grading endpoints
+│       ├── analytics.py            # Overview metrics, skill mastery, & score history
+│       ├── ml.py                   # Benchmark results & live DKT simulator
+│       └── tutor.py                # Conversational AI & WebSocket streaming (/api/tutor/ws)
+│
+├── frontend/                       # Vanilla ES6 SPA (No Node/NPM dependencies)
+│   ├── index.html                  # Single entrypoint HTML5 shell
+│   ├── css/
+│   │   ├── variables.css           # Design tokens, typography, & off-white studio palette
+│   │   └── main.css                # Component styles, animations, & responsive layouts
+│   └── js/
+│       ├── app.js                  # Core reactive state management & view router
+│       ├── api.js                  # Asynchronous REST & WebSocket client (tutorWS)
+│       ├── audio.js                # Web Audio API procedural sound synthesis
+│       ├── charts.js               # Canvas radar and timeline charting utilities
+│       └── particles.js            # Ambient synaptic particle background
+│
+├── auth/                           # Authentication & Security Layer
+│   └── service.py                  # Salted PBKDF2 hashing & verification
+│
+├── database/                       # Storage & Data Management
+│   ├── db.py                       # SQLite connection pool & transaction manager
+│   ├── models.py                   # Dataclasses & table schemas
+│   └── seed_data.py                # Seeder for subjects, topics, 60+ questions, & demo user
+│
+├── quiz/                           # Adaptive Assessment Core
+│   ├── question_bank.py            # Curated questions across ML, Python, Stats, & Algorithms
+│   ├── validator.py                # Pydantic validation for question formatting & keys
+│   ├── generator.py                # 10-question adaptive batch generator
+│   ├── grading.py                  # Score calculation, review, & constructive feedback
+│   └── adaptive_selector.py        # Diagnostic vs Adaptive topic allocation engine
+│
+├── ml/                             # Machine Learning & Knowledge Tracing
+│   ├── dataset_generator.py        # IRT synthetic sequential interaction generator
+│   ├── feature_engineering.py      # Causal prior features & student-split partitions
+│   ├── train_baseline.py           # Logistic Regression & Random Forest trainer
+│   ├── dkt_model.py                # PyTorch GRU recurrent neural network
+│   ├── train_dkt.py                # Sequence training loop with padding masks
+│   ├── evaluate.py                 # Multi-model evaluation & calibration comparison
+│   ├── predict.py                  # Real-time inference engine
+│   └── artifacts/                  # Serialized models (.joblib, .pt) & metrics (.json)
+│
+├── tests/                          # Automated Pytest Suite
+│   ├── test_adaptive.py            # Diagnostic & adaptive allocation tests
+│   ├── test_auth.py                # Authentication & security tests
+│   ├── test_backend.py             # REST endpoints, WebSocket streaming, & greetings
+│   ├── test_db.py                  # SQLite database isolation & CRUD tests
+│   ├── test_grading.py             # Score grading & feedback tests
+│   ├── test_ml.py                  # Data leakage prevention & ML tests
+│   └── test_validator.py           # Question validation tests
+│
+├── run.py                          # Unified single-command launcher
+├── requirements.txt                # Python runtime dependencies
+└── README.md                       # Platform documentation
 ```
 
 ---
 
 ## ⚡ Quick Start
 
-### 1. Environment Setup
-Verify Python 3.10+ is installed:
+### 1. Prerequisites
+- Python **3.10+** (tested on Python 3.10, 3.11, 3.12).
+- Modern web browser (Chrome, Edge, Firefox, Safari).
+
+### 2. Installation
+Clone or navigate to the project directory:
 ```bash
-python --version
+cd SMA
 ```
 
-Install dependencies:
+Install Python dependencies:
 ```bash
 pip install -r requirements.txt
 ```
 
-*(Optional)* Copy `.env.example` to `.env` if using external LLM APIs:
-```bash
-cp .env.example .env
-```
-*Note: If no API keys are provided, StudyMind runs seamlessly in verified offline mode.*
-
-### 2. Initialize Database & Seed Content
-Seed subjects, topics, verified questions, and the demo student:
+### 3. Initialize Database (Optional / Pre-seeded)
+The database comes pre-seeded with subjects, topics, verified questions, and demo learner **Alex Morgan**. If you ever wish to re-initialize from scratch:
 ```bash
 python -m database.seed_data
 ```
 
-### 3. Run the Streamlit Web Application
+### 4. Launch the Application
+Run the unified launcher:
 ```bash
-streamlit run app.py
+python run.py
 ```
-Open your browser at `http://localhost:8501`.
 
-**Demo Credentials:**
-- **Username:** `demo_student`
-- **Password:** `password123`
-*(Or click the "Use Demo Account" quick-fill button on the login screen).*
+Open your browser and navigate to:
+👉 **[http://localhost:8000](http://localhost:8000)**
+
+**Interactive OpenAPI Swagger Documentation:**
+👉 **[http://localhost:8000/docs](http://localhost:8000/docs)**
 
 ---
 
-## 🔬 Machine Learning Experiments
+## 👤 Demo Learner Profile
 
-StudyMind includes complete, runnable scripts to regenerate data, train models, and evaluate performance:
+To immediately explore the platform with historical quiz attempts, mastery metrics, and personalized recommendations, click the **"⚡ Try as Demo Learner"** button on the sign-in screen, or use the credentials:
 
-### 1. Generate Sequential Dataset
-```bash
-python -m ml.dataset_generator
-```
-Generates `data/sample_data.csv` containing ~18,000 interactions across 300 students.
+- **Username:** `demo_student`
+- **Password:** `password123`
+- **Learner Name:** Alex Morgan
 
-### 2. Train Classical ML Baselines
-```bash
-python -m ml.train_baseline
-```
-Trains Logistic Regression and Random Forest on leakage-safe student partitions and saves `ml/artifacts/baseline_model.joblib`.
+---
 
-### 3. Train Deep Knowledge Tracing (DKT GRU)
-```bash
-python -m ml.train_dkt
-```
-Trains a PyTorch GRU on padded, masked student sequences and saves weights to `ml/artifacts/dkt_model.pt`.
+## 🔌 API & WebSocket Reference
 
-### 4. Side-by-Side Model Evaluation
-```bash
-python -m ml.evaluate
-```
-Compares Logistic Regression, Random Forest, and DKT GRU on the identical held-out student test partition:
-- **Metrics:** Accuracy, Precision, Recall, F1-Score, ROC-AUC, Log Loss.
-- **Calibration:** Expected Calibration Error (ECE) and reliability diagrams.
+| Method | Endpoint | Description |
+| :--- | :--- | :--- |
+| `GET` | `/api/health` | Service health status and version info |
+| `POST` | `/api/auth/login` | User authentication returning session token |
+| `POST` | `/api/auth/demo` | One-click login for demo learner Alex Morgan |
+| `POST` | `/api/auth/register` | Register new student profile |
+| `GET` | `/api/subjects` | List all available curriculum subjects |
+| `POST` | `/api/quiz/generate` | Generate guaranteed 10-question adaptive quiz |
+| `POST` | `/api/quiz/submit` | Submit answers, calculate score, update mastery |
+| `GET` | `/api/analytics/overview/{id}`| Learner summary metrics and streaks |
+| `GET` | `/api/analytics/mastery/{id}` | Radar mastery values across all 15 skills |
+| `GET` | `/api/ml/benchmark` | Comparative ML model metrics (DKT vs Baselines)|
+| `POST` | `/api/ml/simulate` | Interactive DKT simulator inference |
+| `POST` | `/api/tutor/chat` | AI Coach HTTP REST endpoint |
+| `WS` | `/api/tutor/ws` | **Real-time AI Coach WebSocket streaming** |
+
+---
+
+## 🔬 Machine Learning Pipeline
+
+StudyMindAI contains a complete, reproducible machine learning pipeline for knowledge tracing:
+
+1. **Synthetic Interaction Generation:**
+   ```bash
+   python -m ml.dataset_generator
+   ```
+   Generates synthetic interaction sequences based on Item Response Theory (IRT) across 300 students.
+
+2. **Train Classical ML Baselines (Logistic Regression & Random Forest):**
+   ```bash
+   python -m ml.train_baseline
+   ```
+   Extracts strictly causal prior features with leakage-safe student partitioning.
+
+3. **Train Deep Knowledge Tracing (DKT GRU):**
+   ```bash
+   python -m ml.train_dkt
+   ```
+   Trains a PyTorch Recurrent Neural Network using padded sequences and masked Cross-Entropy Loss.
+
+4. **Multi-Model Evaluation & Reliability Calibration:**
+   ```bash
+   python -m ml.evaluate
+   ```
+   Evaluates all models on a held-out student partition, computing ROC-AUC, F1-Score, and Expected Calibration Error (ECE).
 
 ---
 
 ## 🧪 Automated Testing
 
-Run the full automated test suite (26 tests covering auth, database isolation, grading, adaptive selection, question validation, topic-to-skill mapping, question bank coverage, ceiling analysis, and ML pipeline):
+StudyMindAI includes an extensive test suite covering authentication, database isolation, question validation, adaptive allocation, grading, ML leakage prevention, and live WebSocket streaming:
 
 ```bash
 python -m pytest -v
 ```
 
-All tests execute against temporary isolated databases to ensure zero side effects.
+All **33 automated tests** run against isolated test databases and in-memory test clients to ensure zero side-effects.
 
 ---
 
-## 🛡️ Academic Honesty & Scope
+## 🛡️ License & Academic Notice
 
-This application is an **academic prototype** built for educational demonstration:
-- Knowledge state predictions represent **statistical approximations** and should never be treated as direct measurements of student ability.
-- Recommendations are growth-oriented heuristics to guide study time, not diagnostic judgments.
-- Real-world deployment requires production telemetry and pedagogical oversight.
+This project is licensed under the **MIT License**.
+
+> **Note:** StudyMindAI is an adaptive educational technology platform and machine learning showcase. Skill mastery estimations represent statistical approximations of student knowledge state to guide deliberate practice, not definitive measurements of human intellect.

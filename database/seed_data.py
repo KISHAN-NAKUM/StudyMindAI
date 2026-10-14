@@ -100,14 +100,17 @@ def seed_database(db_path: str = DEFAULT_DB_PATH) -> None:
 
     # 3. Seed Demo Student
     cursor.execute("SELECT id FROM students WHERE username = ?", ("demo_student",))
-    if not cursor.fetchone():
+    row = cursor.fetchone()
+    if not row:
         salt = os.urandom(16).hex()
         pwd_hash = hash_password("password123", salt)
         cursor.execute(
             """INSERT INTO students (username, display_name, password_hash, salt, created_at)
                VALUES (?, ?, ?, ?, datetime('now'))""",
-            ("demo_student", "Alex Mercer (Demo)", pwd_hash, salt)
+            ("demo_student", "Alex Morgan", pwd_hash, salt)
         )
+    else:
+        cursor.execute("UPDATE students SET display_name = ? WHERE username = ?", ("Alex Morgan", "demo_student"))
 
     conn.commit()
     conn.close()

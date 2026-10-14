@@ -1,36 +1,56 @@
-# Environment & Secrets
+# ==============================================================================
+# StudyMindAI .gitignore
+# ==============================================================================
+
+# Critical Security & Credentials (NEVER COMMIT API KEYS)
 .env
 .env.*
+.env.local
 !.env.example
 
-# Python cache & bytecode
+# Byte-compiled / optimized / Python caches
 __pycache__/
-*.pyc
-*.pyo
-*.pyd
-
-# Testing
-.pytest_cache/
-.coverage
-htmlcov/
-
-# Local Database & data artifacts
-data/studymind.db
-*.db
-*.sqlite3
+*.py[cod]
+*$py.class
+*.so
 
 # Virtual Environments
 venv/
 .venv/
 env/
+ENV/
+env.bak/
+venv.bak/
 
-# IDE & OS
-.vscode/
-.idea/
+# Local SQLite Database (auto-generated & seeded on startup)
+data/studymind.db
+*.db
+*.sqlite
+*.sqlite3
+
+# Test & Coverage artifacts
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.nox/
+
+# Temporary, build, and distribution files
+build/
+dist/
+*.egg-info/
+*.zip
+SMA_clean.zip
+*.log
+
+# OS-generated files
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Archives
-SMA_clean.zip
-*.zip
-
+# IDE & Editor configurations
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
