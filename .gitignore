@@ -54,3 +54,7 @@ desktop.ini
 *.swp
 *.swo
 *~
+
+# Internal prompts & project specifications
+StudyMind_Project_Prompt.md
+
